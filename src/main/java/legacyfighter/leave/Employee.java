@@ -1,19 +1,20 @@
 package legacyfighter.leave;
 
 
-public class LeaveResolver {
+public class Employee {
 
     private Long employeeId;
+
     private String employeeStatus;
     private int daysSoFar;
 
-    LeaveResolver(Long employeeId, String employeeStatus, int daysSoFar) {
+    Employee(Long employeeId, String employeeStatus, int daysSoFar) {
         this.employeeId = employeeId;
         this.employeeStatus = employeeStatus;
         this.daysSoFar = daysSoFar;
     }
 
-    Result resolve(int days) {
+    Result requestDaysOff(int days) {
         if (days < 0) {
             throw new IllegalArgumentException();
         }
@@ -28,6 +29,7 @@ public class LeaveResolver {
             if (employeeStatus.equals("SLACKER")) {
                 return Result.Denied;
             } else {
+                daysSoFar = daysSoFar + days;
                 return Result.Approved;
             }
         }

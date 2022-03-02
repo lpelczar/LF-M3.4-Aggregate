@@ -33,7 +33,7 @@ class LeaveServiceTest {
     @Test
     void requests_of_performers_will_be_manually_processed_after_26th_day() {
         //given
-        when(database.findByEmployeeId(ONE)).thenReturn(new Object[]{"PERFORMER", 10});
+        when(database.findByEmployeeId(ONE)).thenReturn(new Employee(ONE, "PERFORMER", 10));
 
         //when
         Result result = leaveService.requestPaidDaysOff(30, ONE);
@@ -49,7 +49,7 @@ class LeaveServiceTest {
     @Test
     void performers_cannot_get_more_than_45_days() {
         //given
-        when(database.findByEmployeeId(ONE)).thenReturn(new Object[]{"PERFORMER", 10});
+        when(database.findByEmployeeId(ONE)).thenReturn(new Employee(ONE, "PERFORMER", 10));
 
         //when
         Result result = leaveService.requestPaidDaysOff(50, ONE);
@@ -68,7 +68,7 @@ class LeaveServiceTest {
     void slackers_do_not_get_any_leave() {
 
         //given
-        when(database.findByEmployeeId(ONE)).thenReturn(new Object[]{"SLACKER", 10});
+        when(database.findByEmployeeId(ONE)).thenReturn(new Employee(ONE, "SLACKER", 10));
 
         //when
         Result result = leaveService.requestPaidDaysOff(1, ONE);
@@ -83,7 +83,7 @@ class LeaveServiceTest {
     void slackers_get_a_nice_email() {
 
         //given
-        when(database.findByEmployeeId(ONE)).thenReturn(new Object[]{"SLACKER", 10});
+        when(database.findByEmployeeId(ONE)).thenReturn(new Employee(ONE, "SLACKER", 10));
 
         //when
         leaveService.requestPaidDaysOff(1, ONE);
@@ -97,7 +97,7 @@ class LeaveServiceTest {
     @Test
     void regular_employee_doesnt_get_more_than_26_days() {
         //given
-        when(database.findByEmployeeId(ONE)).thenReturn(new Object[]{"REGULAR", 10});
+        when(database.findByEmployeeId(ONE)).thenReturn(new Employee(ONE, "REGULAR", 10));
 
         //when
         Result result = leaveService.requestPaidDaysOff(20, ONE);
@@ -115,7 +115,8 @@ class LeaveServiceTest {
     @Test
     void regular_employee_gets_26_days() {
         //given
-        when(database.findByEmployeeId(ONE)).thenReturn(new Object[]{"REGULAR", 10});
+        Employee regular = new Employee(ONE, "REGULAR", 10);
+        when(database.findByEmployeeId(ONE)).thenReturn(regular);
 
         //when
         Result result = leaveService.requestPaidDaysOff(5, ONE);
@@ -125,7 +126,7 @@ class LeaveServiceTest {
         Mockito.verify(messageBus).sendEvent("request approved");
         Mockito.verifyNoInteractions(escalationManager);
         Mockito.verifyNoInteractions(emailSender);
-        Mockito.verify(database).save(new Object[]{"REGULAR", 15});
+        Mockito.verify(database).save(regular);
 
     }
 
