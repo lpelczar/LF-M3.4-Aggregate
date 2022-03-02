@@ -15,7 +15,7 @@ public class EmployeeLeave {
     }
 
     Result requestDaysOff(int days) {
-        if (days < 0) {
+        if (days <= 0) {
             throw new IllegalArgumentException();
         }
 
