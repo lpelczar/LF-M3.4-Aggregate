@@ -33,7 +33,7 @@ class LeaveServiceTest {
     @Test
     void requests_of_performers_will_be_manually_processed_after_26th_day() {
         //given
-        when(database.findByEmployeeId(ONE)).thenReturn(new Employee(ONE, "PERFORMER", 10));
+        when(database.findByEmployeeId(ONE)).thenReturn(new EmployeeLeave(ONE, "PERFORMER", 10));
 
         //when
         Result result = leaveService.requestPaidDaysOff(30, ONE);
@@ -49,7 +49,7 @@ class LeaveServiceTest {
     @Test
     void performers_cannot_get_more_than_45_days() {
         //given
-        when(database.findByEmployeeId(ONE)).thenReturn(new Employee(ONE, "PERFORMER", 10));
+        when(database.findByEmployeeId(ONE)).thenReturn(new EmployeeLeave(ONE, "PERFORMER", 10));
 
         //when
         Result result = leaveService.requestPaidDaysOff(50, ONE);
@@ -66,24 +66,21 @@ class LeaveServiceTest {
 
     @Test
     void slackers_do_not_get_any_leave() {
-
         //given
-        when(database.findByEmployeeId(ONE)).thenReturn(new Employee(ONE, "SLACKER", 10));
+        when(database.findByEmployeeId(ONE)).thenReturn(new EmployeeLeave(ONE, "SLACKER", 10));
 
         //when
         Result result = leaveService.requestPaidDaysOff(1, ONE);
 
         //then
         assertEquals(Result.Denied, result);
-
-
     }
 
     @Test
     void slackers_get_a_nice_email() {
 
         //given
-        when(database.findByEmployeeId(ONE)).thenReturn(new Employee(ONE, "SLACKER", 10));
+        when(database.findByEmployeeId(ONE)).thenReturn(new EmployeeLeave(ONE, "SLACKER", 10));
 
         //when
         leaveService.requestPaidDaysOff(1, ONE);
@@ -97,7 +94,7 @@ class LeaveServiceTest {
     @Test
     void regular_employee_doesnt_get_more_than_26_days() {
         //given
-        when(database.findByEmployeeId(ONE)).thenReturn(new Employee(ONE, "REGULAR", 10));
+        when(database.findByEmployeeId(ONE)).thenReturn(new EmployeeLeave(ONE, "REGULAR", 10));
 
         //when
         Result result = leaveService.requestPaidDaysOff(20, ONE);
@@ -115,7 +112,7 @@ class LeaveServiceTest {
     @Test
     void regular_employee_gets_26_days() {
         //given
-        Employee regular = new Employee(ONE, "REGULAR", 10);
+        EmployeeLeave regular = new EmployeeLeave(ONE, "REGULAR", 10);
         when(database.findByEmployeeId(ONE)).thenReturn(regular);
 
         //when

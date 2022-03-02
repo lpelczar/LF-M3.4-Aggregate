@@ -1,14 +1,14 @@
 package legacyfighter.leave;
 
 
-public class Employee {
+public class EmployeeLeave {
 
     private Long employeeId;
 
     private String employeeStatus;
     private int daysSoFar;
 
-    Employee(Long employeeId, String employeeStatus, int daysSoFar) {
+    EmployeeLeave(Long employeeId, String employeeStatus, int daysSoFar) {
         this.employeeId = employeeId;
         this.employeeStatus = employeeStatus;
         this.daysSoFar = daysSoFar;

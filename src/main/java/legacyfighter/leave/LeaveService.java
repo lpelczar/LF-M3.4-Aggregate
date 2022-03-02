@@ -16,12 +16,12 @@ public class LeaveService {
     }
 
     public Result requestPaidDaysOff(int days, Long employeeId) {
-        Employee employee = database.findByEmployeeId(employeeId);
+        EmployeeLeave employeeLeave = database.findByEmployeeId(employeeId);
 
-        Result decision = employee.requestDaysOff(days);
+        Result decision = employeeLeave.requestDaysOff(days);
 
         if (decision == Result.Approved) {
-            database.save(employee);
+            database.save(employeeLeave);
             messageBus.sendEvent("request approved");
         } else if (decision == Result.Manual) {
             escalationManager.notifyNewPendingRequest(employeeId);
@@ -35,11 +35,11 @@ public class LeaveService {
 
 class LeaveDatabase {
 
-    Employee findByEmployeeId(Long employeeId) {
+    EmployeeLeave findByEmployeeId(Long employeeId) {
         return null;
     }
 
-    void save(Employee employee) {
+    void save(EmployeeLeave employeeLeave) {
 
     }
 }
