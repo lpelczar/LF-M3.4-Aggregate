@@ -16,41 +16,25 @@ public class LeaveService {
     }
 
     public Result requestPaidDaysOff(int days, Long employeeId) {
-        if (days < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        Result result = null;
-
         Object[] employeeData = database.findByEmployeeId(employeeId);
-
         String employeeStatus = (String) employeeData[0];
         int daysSoFar = (Integer) employeeData[1];
 
-        if (daysSoFar + days > 26) {
+        LeaveResolver leaveResolver = new LeaveResolver(employeeId, employeeStatus, daysSoFar);
 
-            if (employeeStatus.equals("PERFORMER") && daysSoFar + days < 45) {
-                result = Result.Manual;
-                escalationManager.notifyNewPendingRequest(employeeId);
-            } else {
-                result = Result.Denied;
-                emailSender.send("next time");
-            }
+        Result decision = leaveResolver.resolve(days);
 
+        if (decision == Result.Approved) {
+            employeeData[1] = daysSoFar + days;
+            database.save(employeeData);
+            messageBus.sendEvent("request approved");
+        } else if (decision == Result.Manual) {
+            escalationManager.notifyNewPendingRequest(employeeId);
         } else {
-
-            if (employeeStatus.equals("SLACKER")) {
-                result = Result.Denied;
-                emailSender.send("next time");
-            } else {
-                employeeData[1] = daysSoFar + days;
-                result = Result.Approved;
-                database.save(employeeData);
-                messageBus.sendEvent("request approved");
-            }
+            emailSender.send("next time");
         }
 
-        return result;
+        return decision;
     }
 }
 
